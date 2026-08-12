@@ -16,7 +16,7 @@ description: Measures the real size of app/dist/bundle.js by running the project
 
 ## Instructions
 
-1. **Run the script — do not estimate.**
+1. **Run the script — do not estimate.** From the repo root:
 
    ```bash
    node .agents/skills/analyzing-bundle-size/scripts/measure-bundle.mjs
@@ -24,24 +24,30 @@ description: Measures the real size of app/dist/bundle.js by running the project
 
    It runs `npm run build` in `app/` (esbuild → minified ESM `dist/bundle.js`),
    then reports the real byte count, the gzipped size, which widgets are in the
-   bundle, and the average bytes per widget. Paths resolve relative to the
-   script, so the working directory does not matter.
+   bundle, and the average bytes per widget. The paths it builds and reads
+   resolve relative to the script itself, so only the path you type to launch
+   it depends on the working directory — from elsewhere, adjust that path (or
+   use an absolute one).
 
 2. **Flags:**
    - `--json` — machine-readable report (use when feeding the number into
      further work; suppresses the build's own stdout).
-   - `--compare <bytes>` — prints the delta and percentage against a previous
-     measurement. This is how you report a change's impact.
+   - `--compare <bytes>` — delta and percentage against a previous **raw** byte
+     count.
+   - `--compare-gzip <bytes>` — same, against a previous **gzipped** byte count.
+     Pass both to report both deltas; each one takes a whole, non-negative
+     number of bytes.
    - `--skip-build` — stat the existing `app/dist/bundle.js` without rebuilding.
      Only use it when a build just ran; otherwise the number is stale.
 
 3. **For a before/after comparison**, measure on the unchanged tree first, note
-   the byte count, apply the change, then re-run with
-   `--compare <the earlier number>`. Both runs must be full builds (no
-   `--skip-build`), or the comparison is meaningless.
+   both the raw and the gzipped byte counts, apply the change, then re-run with
+   `--compare <earlier raw> --compare-gzip <earlier gzipped>`. Both runs must be
+   full builds (no `--skip-build`), or the comparison is meaningless.
 
-4. **Report the actual numbers** — bytes and gzipped bytes, plus the delta when
-   comparing. Quote them as measured; don't round them into a vague claim.
+4. **Report the actual numbers** — raw bytes and gzipped bytes, plus both
+   deltas when comparing. Quote them as measured; don't round them into a vague
+   claim.
 
 5. **Interpret the number with the architecture in mind.** Every widget reaches
    the bundle through the side-effect imports in `app/src/widgets/index.ts`, so

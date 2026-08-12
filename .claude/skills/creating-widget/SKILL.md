@@ -32,12 +32,12 @@ import { register, type WidgetProps } from "../../core/registry.js";
 
 export interface AlertProps extends WidgetProps {
   message: string;
-  level?: "info" | "warn" | "error";
+  tone?: "info" | "warn" | "error";
 }
 
 export function createAlert(props: AlertProps): string {
-  const level = props.level ?? "info";
-  return `<div class="alert alert--${level}">${props.message}</div>`;
+  const tone = props.tone ?? "info";
+  return `<div class="alert alert--${tone}">${props.message}</div>`;
 }
 
 register("alert", createAlert);
@@ -72,14 +72,14 @@ import { describe, expect, it } from "vitest";
 import { createAlert } from "./alert.js";
 
 describe("createAlert", () => {
-  it("defaults to the info level", () => {
+  it("defaults to the info tone", () => {
     expect(createAlert({ message: "Saved" })).toBe(
       '<div class="alert alert--info">Saved</div>',
     );
   });
 
-  it("respects an explicit level", () => {
-    expect(createAlert({ message: "Boom", level: "error" })).toBe(
+  it("respects an explicit tone", () => {
+    expect(createAlert({ message: "Boom", tone: "error" })).toBe(
       '<div class="alert alert--error">Boom</div>',
     );
   });
